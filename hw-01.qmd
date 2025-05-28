@@ -1,6 +1,6 @@
 ---
 title: "HW 01"
-author: "INSERT YOUR NAME HERE"
+author: "Brooke Pacheco"
 format: 
   html:
     embed-resources: true
