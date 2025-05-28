@@ -1,5 +1,5 @@
 ---
-title: "HW 01 Take2"
+title: "HW 01"
 author: "Brooke Pacheco"
 format: 
   html:
