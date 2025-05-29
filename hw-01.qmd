@@ -12,8 +12,11 @@ toc: true
 ```{r setup}
 # load packages
 library(tidyverse)
+library(glue)
+library(scales)
 library(here)
 library(countdown)
+library(ggthemes)
 
 # set theme for ggplot2
 ggplot2::theme_set(ggplot2::theme_minimal(base_size = 14))
@@ -37,12 +40,13 @@ if (!require("pacman"))
   install.packages("pacman")
 
 # use this line for installing/loading
-# pacman::p_load() 
+pacman::p_load(tidyverse,
+               glue,
+               scales,
+               ggthemes) 
 
-tryCatch(
-  devtools::install_github("tidyverse/dsbox"),
-  error = function(e) message("Could not install dsbox: ", e$message)
-)
+devtools::install_github("tidyverse/dsbox")
+
 ```
 
 ## 1 - Road traffic accidents in Edinburgh
@@ -50,10 +54,35 @@ tryCatch(
 ```{r label-me-1}
 # Read in data from accidents file
 
-accidents <- read_csv("data/accidents.csv")
+accidents <- read_csv(here(
+  "data" ,"accidents.csv"))
 
-ggplot(accidents, aes(x = `Time of day`, y = Density)) +
-  geom_point()
+accidents|>
+  glimpse()
+
+
+accidents |>
+  mutate(density = glue("{severity}-{day_of_week}")) |>
+  glimpse()
+
+ggplot(accidents, aes(x = time, y = severity, group = severity, color = severity)) +
+  geom_line() +
+  geom_density() +
+  labs(
+    x = "Time of day",
+    y = "Density",
+    title = "Number of accidents throughout the day",
+    subtitle = "By day of the week and severity"
+  )
+
+
+
+# ggplot(accidents, aes(x = time, y = time)) +
+#   geom_point() +
+#   geom_smooth(aes(color = "blue"))
+# ggplot(accidents, aes(x = time, y = time)) +
+#   geom_point() +
+#   geom_smooth(aes(color = "yellow"))
 
 
 ```
