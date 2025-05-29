@@ -1,6 +1,8 @@
 ---
 title: "HW 01"
-author: "Brooke Pacheco  "
+author: "Brooke Pacheco"
+date: "2025-05-28"
+description: "Homework 1"
 format: 
   html:
     embed-resources: true
@@ -53,38 +55,34 @@ devtools::install_github("tidyverse/dsbox")
 
 ```{r label-me-1}
 # Read in data from accidents file
-
 accidents <- read_csv(here(
   "data" ,"accidents.csv"))
 
-accidents|>
-  glimpse()
+# Create a new column - wrangle the data
+accidents_wrangle <- accidents |>
+  mutate(
+    week = case_when(
+      day_of_week %in% c("Saturday", "Sunday") ~ "Weekend",
+      TRUE ~ "Weekday"
+    ),
+    week = fct_relevel(week, "weekend", "weekday")
+  ) 
 
-
-accidents |>
-  mutate(density = glue("{severity}-{day_of_week}")) |>
-  glimpse()
-
-ggplot(accidents, aes(x = time, y = severity, group = severity, color = severity)) +
-  geom_line() +
-  geom_density() +
+# Create the plot
+ggplot(accidents_wrangle, aes(x = time, fill = severity, group = severity)) +
+  geom_density(color = "black", alpha = 0.5) +
+  scale_fill_manual(values = c("#AA93B0", "#9ECAC8", "#FEF39F")) +
   labs(
     x = "Time of day",
     y = "Density",
     title = "Number of accidents throughout the day",
-    subtitle = "By day of the week and severity"
-  )
+    subtitle = "By day of the week and severity",
+    fill = "Severity"
+  ) + 
+  facet_wrap(~ week, nrow = 2) +
+  theme_minimal(base_size = 11)
 
-
-
-# ggplot(accidents, aes(x = time, y = time)) +
-#   geom_point() +
-#   geom_smooth(aes(color = "blue"))
-# ggplot(accidents, aes(x = time, y = time)) +
-#   geom_point() +
-#   geom_smooth(aes(color = "yellow"))
-
-
+# Description TODO
 ```
 
 ## 2 - NYC marathon winners
