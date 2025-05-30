@@ -195,14 +195,10 @@ years (or decades).TODO
 ## 3 - US counties
 
 ### 3a
-The code displays a scatter plot of median education versus median household income. It also overlays a box plot of population in 2017 by smoking ban status on the same graph. Although the code runs without errors, it combines two unrelated visualizations on a single plot, which makes the results confusing and difficult to interpret.
-
-In addition, both layers use the same color scheme, making it hard to distinguish between the two plot types. Next, the y-axis must represent either income or population, but not both. The visual is misleading. Lastly, there is a category labeled 'NA' on the x-axis, from smoking_ban, that doesn't represent valid data and should be removed or handled.
+The code displays a scatter plot of median education versus median household income. It also overlays a box plot of population in 2017 by smoking ban status on the same graph. Although the code runs without errors, it combines two unrelated visualizations on a single plot, which makes the results confusing and difficult to interpret. In addition, both layers use the same color scheme, making it hard to distinguish between the two plot types. Next, the y-axis must represent either income or population, but not both. The visual is misleading. Lastly, there is a category labeled 'NA' on the x-axis, from smoking_ban, that doesn't represent valid data and should be removed or handled.
 
 ### 3b
-It is easier to compare poverty levels in the first plot, where the faceting variables are displayed vertically or in rows. From this plot, we observe that individuals who are older, more educated, and have lower poverty levels are more likely to be homeowners. This layout makes patterns easier to identify and shows clearer comparisons across groups.
-
-In contrast, the version where faceting variables are displayed horizontally by column can be misleading. It gives the impression that individuals with only a high school diploma or some college experience are more likely to own homes at a younger age, which is not necessarily supported by the data. This highlights the importance of intentional facet layout. Row based faceting displays better comparisons when there are multiple categorical groupings.
+It is easier to compare poverty levels in the first plot, where the faceting variables are displayed vertically or by row. From this plot, we observe that individuals who are older, more educated, and have lower poverty levels are more likely to be homeowners. This layout makes patterns easier to identify and shows clearer comparisons across groups. In contrast, the version where faceting variables are displayed horizontally by column can be misleading. It gives the impression that individuals with only a high school diploma or some college experience are more likely to own homes at a younger age, which is not necessarily supported by the data. This highlights the importance of intentional facet layout. Row based faceting displays better comparisons when there are multiple groupings.
 
 ### 3c
 ```{r (3c)}
@@ -298,7 +294,7 @@ ggplot(credit) +
   labs (
     x = "Income",
     y = "Credit card balance",
-    caption = "https://stackoverflow.com/questions/26191833/add-panel-border-to-ggplot2"
+    caption = "Scources: https://stackoverflow.com/questions/26191833/add-panel-border-to-ggplot2"
   ) +
   scale_x_continuous(labels = label_dollar(suffix = "K")) +
   scale_y_continuous(labels = label_dollar()) +
@@ -346,7 +342,7 @@ ggplot(credit) +
   labs (
     x = "Income",
     y = "Credit utilization",
-    caption = "https://stackoverflow.com/questions/26191833/add-panel-border-to-ggplot2"
+    caption = "Scources: https://stackoverflow.com/questions/26191833/add-panel-border-to-ggplot2"
   ) +
   scale_x_continuous(labels = label_dollar(suffix = "K")) +
   scale_y_continuous(labels = label_percent()) +
