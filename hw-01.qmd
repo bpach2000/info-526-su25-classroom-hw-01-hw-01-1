@@ -93,7 +93,7 @@ Description TODO\n
 
 
 ## 2 - NYC marathon winners
-# 2a.
+# 2a
 ```{r (2a)}
 # Read in data from nyc marathon file
 marathon <- read_csv(here(
@@ -121,7 +121,7 @@ ggplot(marathon, aes(x = time_hrs)) +
 ```
 The histogram makes it easier to gauge the total number of runners and to understand how many runners finished within each time range. It provides a clear visual representation of the distribution of finish times across the dataset. In contrast, the boxplot does not clearly show the quantity of runners, but it is effective for identifying trends such as the median finish time and any outliers.
 
-# 2b.
+# 2b
 ```{r (2b)}
 # Create the histogram plot
 ggplot(marathon, aes(x = time_hrs, fill = division)) +
@@ -154,10 +154,10 @@ ggplot(marathon, aes(x = division, y = time_hrs, fill = division)) +
 Although not required, I recreated the same plot updates for the histogram as a practice exercise.
 The boxplot, with the fill parameter set to division (men or women), provides a clear visual comparison of performance based on gender. It shows that, in general, men tend to finish before the 2.25-hour mark, while women typically finish closer to or just after the 2.5-hour mark. The outliers for the men's division extend slightly beyond 2.5 hours, whereas the women's outliers appear after the 3-hour mark.
 
-# 2c.
+# 2c
 TODO
 
-# 2d.
+# 2d
 ```{r (2d)}
 # Read in data from nyc marathon file
 marathon <- read_csv(here(
@@ -235,7 +235,7 @@ ggplot(county %>% filter(!is.na(median_edu))) +
 # Plot C 
 ggplot(county %>% filter(!is.na(median_edu))) + 
   geom_point(aes(x = homeownership, y = poverty)) +
-  geom_smooth(aes(x = homeownership, y = poverty, group = metro), color = "limegreen", se = FALSE, show.legend = FALSE) +
+  geom_smooth(aes(x = homeownership, y = poverty, group = metro), color = "green", se = FALSE, show.legend = FALSE) +
   labs (
     title = "Plot C",
   ) +
@@ -292,7 +292,99 @@ ggplot(county %>% filter(!is.na(median_edu))) +
   theme_minimal(base_size = 11) 
 ```
 
-
 ## 4 - Rental apartments in SF
 
+# 4a
+```{r (4a)}
+# Read in data from credit file
+credit <- read_csv(here(
+  "data" ,"credit.csv"))
+
+# Create the plot
+ggplot(credit) + 
+  geom_point(aes(x = income, y = balance, color = student, shape = student), show.legend = FALSE) + 
+  geom_smooth(aes(x = income, y = balance, color = student), method = "lm", se = FALSE, show.legend = FALSE) +
+  scale_color_manual(
+    values = c("Yes" = "#AA93B0", "No" = "#9ECAC8")
+  ) +
+  scale_shape_manual(
+    values = c("circle", "triangle" ) 
+  ) +
+  labs (
+    x = "Income",
+    y = "Credit card balance",
+    caption = "https://stackoverflow.com/questions/26191833/add-panel-border-to-ggplot2"
+  ) +
+  scale_x_continuous(labels = label_dollar(suffix = "K")) +
+  scale_y_continuous(labels = label_dollar()) +
+  facet_grid(
+    student ~ married,
+    labeller = labeller(
+      student = c("Yes" = "student: Yes", "No" = "student: No"),
+      married = c("Yes" = "married: Yes", "No" = "married: No")
+      ) 
+  ) + 
+    theme_minimal(base_size = 14) +
+    theme(
+    panel.border = element_rect(color = "black", fill = NA, linewidth = 0.5),
+    strip.background = element_rect(fill = "gray90", color = "black"),
+    )
+
+```
+The general trend shows that individuals with higher incomes tend to carry higher credit card balances. Among lower income earners, there is greater variability. Some have low balances while others carry substantial debt.
+
+Students who are not married typically have the lowest incomes, but still carry relatively high credit card debt. In contrast, married students tend to have slightly higher incomes and lower balances, suggesting more financial stability.
+
+Married individuals who are not students appear to include the highest income earners. Some of them also hold the largest credit card balances and these are the most extreme outliers in the dataset. Meanwhile, unmarried non-students show a more even distribution in both income and credit card balance.
+
+# 4b
+The combination of marital and student status, along with income, provides insight into credit card balance trends. Married individuals who are not students generally have the highest incomes and include outliers with the largest credit card balances. In contrast, unmarried students tend to have the lowest incomes and display a wide range of credit card debt levels.
+
+# 4c
+```{r (4c)}
+# Wrangle data - credit card utilization
+credit <- credit |>
+  mutate(
+    utilization = (balance / limit)
+  ) |>
+  glimpse()
+
+# Create the plot
+ggplot(credit) + 
+  geom_point(aes(x = income, y = utilization, color = student, shape = student), show.legend = FALSE) + 
+  geom_smooth(aes(x = income, y = utilization, color = student), method = "lm", se = FALSE, show.legend = FALSE) +
+  scale_color_manual(
+    values = c("Yes" = "#AA93B0", "No" = "#9ECAC8")
+  ) +
+  scale_shape_manual(
+    values = c("circle", "triangle" ) 
+  ) +
+  labs (
+    x = "Income",
+    y = "Credit utilization",
+    caption = "https://stackoverflow.com/questions/26191833/add-panel-border-to-ggplot2"
+  ) +
+  scale_x_continuous(labels = label_dollar(suffix = "K")) +
+  scale_y_continuous(labels = label_percent()) +
+  facet_grid(
+    student ~ married,
+    labeller = labeller(
+      student = c("Yes" = "student: Yes", "No" = "student: No"),
+      married = c("Yes" = "married: Yes", "No" = "married: No")
+      ) 
+  ) + 
+    theme_minimal(base_size = 14) +
+    theme(
+    panel.border = element_rect(color = "black", fill = NA, linewidth = 0.5),
+    strip.background = element_rect(fill = "gray90", color = "black"),
+    )
+
+```
+
+# 4d
+Unmarried students have the highest credit card utilization relative to their income. Similarly, married students with lower incomes also show high utilization rates. Overall, there is a trend where lower income individuals tend to use a larger portion of their available credit.
+
+In contrast, while married non-students often carry higher credit card balances, their utilization rates remain relatively low, typically below 20% of their credit limit. This suggests that higher income earners tend to have greater available credit and are less reliant on it, while lower income individuals may have limited credit access and use a higher percentage of what is available to them.
+
 ## 5 - Napoleon’s march.
+
