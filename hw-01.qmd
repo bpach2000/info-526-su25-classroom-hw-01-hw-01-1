@@ -19,9 +19,14 @@ library(scales)
 library(here)
 library(countdown)
 library(ggthemes)
+library(gt)
+library(palmerpenguins)
+library(openintro)
+library(ggrepel)
+library(patchwork)
 
 # set theme for ggplot2
-ggplot2::theme_set(ggplot2::theme_minimal(base_size = 14))
+ggplot2::theme_set(ggplot2::theme_minimal(base_size = 11))
 
 # set width of code output
 options(width = 65)
@@ -53,7 +58,7 @@ devtools::install_github("tidyverse/dsbox")
 
 ## 1 - Road traffic accidents in Edinburgh
 
-```{r label-me-1}
+```{r Road traffic accidents in Edinburgh}
 # Read in data from accidents file
 accidents <- read_csv(here(
   "data" ,"accidents.csv"))
@@ -82,16 +87,122 @@ ggplot(accidents_wrangle, aes(x = time, fill = severity, group = severity)) +
   facet_wrap(~ week, nrow = 2) +
   theme_minimal(base_size = 11)
 
-# Description TODO
+
 ```
+
+Description TODO\n
+
 
 ## 2 - NYC marathon winners
+# 2a.
+```{r (2a)}
+# Read in data from nyc marathon file
+marathon <- read_csv(here(
+  "data" ,"nyc_marathon.csv"))
 
-```{r label-me-2}
+# Create the histogram plot
+ggplot(marathon, aes(x = time_hrs)) +
+  geom_histogram(binwidth = 0.1) +
+  labs (
+    title = "Histogram of all runners in data set",
+    x = "Time in hours",
+    y = "Count"
+  ) +
+  theme_minimal(base_size = 11)
 
+# Create the box plot
+ggplot(marathon, aes(x = time_hrs)) +
+  geom_boxplot(outlier.size = 2) +
+  labs (
+    title = "Box plot of all runners in data set",
+    x = "Division",
+    y = "Time in hours"
+  ) +
+  theme_minimal(base_size = 11)
 ```
 
+The histogram makes it easier to gauge the total number of runners and to understand how many runners finished within each time range. It provides a clear visual representation of the distribution of finish times across the dataset. In contrast, the boxplot does not clearly show the quantity of runners, but it is effective for identifying trends such as the median finish time and any outliers.
+
+# 2b.
+```{r (2b)}
+# Create the histogram plot
+ggplot(marathon, aes(x = time_hrs, fill = division)) +
+  geom_histogram(binwidth = 0.1) +
+  scale_fill_manual(
+    values = c("Men" = "cornsilk4", "Women" = "deepskyblue3")
+  ) +
+  labs (
+    title = "Histogram of all runners in data set",
+    x = "Time in hours",
+    y = "Count",
+    fill = "Division"
+  ) +
+  theme_minimal(base_size = 11)
+
+# Create the box plot
+ggplot(marathon, aes(x = division, y = time_hrs, fill = division)) +
+  geom_boxplot(outlier.size = 2) +
+  scale_fill_manual(
+    values = c("Men" = "cornsilk4", "Women" = "deepskyblue3")
+  ) +
+  labs (
+    title = "Box plot of all runners in data set",
+    x = "Division",
+    y = "Time in hours",
+    fill = "Division"
+  ) +
+  theme_minimal(base_size = 11)
+```
+
+Although not required, I recreated the same plot updates for the histogram as a practice exercise.
+The boxplot, with the fill parameter set to division (men or women), provides a clear visual comparison of performance based on gender. It shows that, in general, men tend to finish before the 2.25-hour mark, while women typically finish closer to or just after the 2.5-hour mark. The outliers for the men's division extend slightly beyond 2.5 hours, whereas the women's outliers appear after the 3-hour mark.
+
+# 2c.
+TODO
+
+# 2d.
+```{r (2d)}
+# Read in data from nyc marathon file
+marathon <- read_csv(here(
+  "data" ,"nyc_marathon.csv")) |>
+  mutate(
+    decade_raced = (year %/% 10) * 10,
+    decade_raced_cat = case_when(
+      decade_raced <= 1970 ~ "1970 or before",
+      decade_raced >= 2020 ~ "2020 or after",
+      TRUE ~ as.character(decade_raced)
+    )
+  )
+
+# Add new variable
+marathon |>
+  count(decade_raced) |>
+  glimpse()
+
+# Create the box plot
+ggplot(marathon, aes(x = decade_raced_cat, y = time_hrs, fill = division)) +
+  geom_boxplot(outlier.size = 2) +
+  scale_fill_manual(
+    values = c("Men" = "cornsilk4", "Women" = "deepskyblue3")
+  ) +
+  labs (
+    title = "Marathon Finish Times by Decade and Division",
+    x = "Year",
+    y = "Time in Hours",
+    fill = "Division"
+  ) +
+  theme_minimal(base_size = 11)
+```
+This plot gives us a better idea of performance for men and womens race times based on 
+years (or decades).TODO
+
 ## 3 - US counties
+
+```{r (a)}
+# Read in data from accidents file
+
+
+```
 
 ## 4 - Rental apartments in SF
 
