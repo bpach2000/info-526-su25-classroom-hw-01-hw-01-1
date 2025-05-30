@@ -370,5 +370,58 @@ Unmarried students have the highest credit card utilization relative to their in
 
 In contrast, while married non-students often carry higher credit card balances, their utilization rates remain relatively low, typically below 20% of their credit limit. This suggests that higher income earners tend to have greater available credit and are less reliant on it, while lower income individuals may have limited credit access and use a higher percentage of what is available to them.
 
-## 5 - Napoleon’s march.
+### Sources
+Grid design in question 4 inspired by:
+https://stackoverflow.com/questions/26191833/add-panel-border-to-ggplot2
 
+## 5 - Napoleon’s march.
+```{r (5)}
+# Read in data from napoleon file
+napoleon <- read_rds(here(
+  "data" ,"napoleon.rds"))
+
+# Create the plot
+# This line creates a ggplot using the troop data extracted from the Napoleon RDS file. 
+# Within the aesthetics, the x-axis represents longitude, the y-axis represents latitude, 
+# each group is plotted as a separate line, the color indicates the direction of troop 
+# movement, and the line thickness corresponds to the size of the troops.
+ggplot(napoleon$troops, aes(x = long, y = lat, group = group, color = direction, linewidth = survivors), show.legend = FALSE) + 
+  # The function geom_path() creates lines by connecting data points, and setting 
+  # show.legend = FALSE prevents the corresponding legend from appearing in the plot.
+  geom_path(lineend = "round", show.legend = FALSE) + 
+  # The function geom_point() creates a scatter plot.To make these points easier to point out the color is set to #DC5b44.
+  geom_point(data = napoleon$cities, aes(x = long, y = lat), color = "#DC5b44", inherit.aes = FALSE) +
+  # The function geom_text_repel() is similar to geom_text() except text won't overlap. The font size, text style, color 
+  # are set and setting show.legend = FALSE prevents the corresponding legend from appearing in the plot. 
+  geom_text_repel(data = napoleon$cities, aes(x = long, y = lat, label = city), size = 2, family = "serif", fontface = "bold.italic", color = "#DC5b44", inherit.aes = FALSE) +
+  # scale_size refers to the thickness limits of the lines in the plot - in this case it is the size troops. 
+  scale_size(range = c(0.09, 8)) +
+  # Manually setting the colors for the groups mapped to the color aesthetic.
+  scale_color_manual(values = c("#DFC17E", "#252523")) +
+  # Labels titles in the plot
+  labs (
+    title = "Recreation of Napoleon's march plot by Charles John Minard",
+    subtitle = "Napoleon's 1812 winter retreat from moscow",
+    size = "Survivors",
+    color = "Direction"
+  ) +
+  # Sets the visible limits of the plot without removing data outside the range.
+  coord_cartesian(xlim = c(24, 38), ylim = c(53.75, 55.75)) + 
+  # Sets light grey background with white lines and text elements set to 11 units.
+  theme_gray(base_size = 11) +
+  # The height is 0.2 times the width. Plot will appear much wider.
+  theme(aspect.ratio = 0.2)
+
+```
+### Sources
+Directly borrowed code snippet from:
+https://www.andrewheiss.com/blog/2017/08/10/exploring-minards-1812-plot-with-ggplot2/
+
+To stretch x axis in question 5, code was inspired by:
+https://ggplot2.tidyverse.org/reference/coord_fixed.html
+
+Used this to solve bug in question 5 - geom_point and geom_text inherited the parents group setting. Code inspired by: 
+https://stackoverflow.com/questions/69817450/r-ggplot2-understanding-the-parameters-of-the-aes-function
+
+From question 5, geom_text_repel parameter inspiration from:
+http://www.cookbook-r.com/Graphs/Fonts/
