@@ -89,7 +89,6 @@ ggplot(accidents_wrangle, aes(x = time, fill = severity, group = severity)) +
 
 
 ```
-
 Description TODO\n
 
 
@@ -120,7 +119,6 @@ ggplot(marathon, aes(x = time_hrs)) +
   ) +
   theme_minimal(base_size = 11)
 ```
-
 The histogram makes it easier to gauge the total number of runners and to understand how many runners finished within each time range. It provides a clear visual representation of the distribution of finish times across the dataset. In contrast, the boxplot does not clearly show the quantity of runners, but it is effective for identifying trends such as the median finish time and any outliers.
 
 # 2b.
@@ -153,7 +151,6 @@ ggplot(marathon, aes(x = division, y = time_hrs, fill = division)) +
   ) +
   theme_minimal(base_size = 11)
 ```
-
 Although not required, I recreated the same plot updates for the histogram as a practice exercise.
 The boxplot, with the fill parameter set to division (men or women), provides a clear visual comparison of performance based on gender. It shows that, in general, men tend to finish before the 2.25-hour mark, while women typically finish closer to or just after the 2.5-hour mark. The outliers for the men's division extend slightly beyond 2.5 hours, whereas the women's outliers appear after the 3-hour mark.
 
@@ -198,11 +195,103 @@ years (or decades).TODO
 
 ## 3 - US counties
 
-```{r (a)}
-# Read in data from accidents file
-
+# 3a
+```{r (3a)}
+ggplot(county) +
+  geom_point(aes(x = median_edu, y = median_hh_income)) +
+  geom_boxplot(aes(x = smoking_ban, y = pop2017))
 
 ```
+The code displays a scatter plot of median education versus median household income. It also overlays a box plot of population in 2017 by smoking ban status on the same graph. Although the code runs without errors, it combines two unrelated visualizations on a single plot, which makes the results confusing and difficult to interpret.
+
+In addition, both layers use the same color scheme, making it hard to distinguish between the two plot types. Next, the y-axis must represent either income or population, but not both. The visual is misleading. Lastly, there is a category labeled 'NA' on the x-axis, from smoking_ban, that doesn't represent valid data and should be removed or handled.
+
+# 3b
+It is easier to compare poverty levels in the first plot, where the faceting variables are displayed vertically or in rows. From this plot, we observe that individuals who are older, more educated, and have lower poverty levels are more likely to be homeowners. This layout makes patterns easier to identify and shows clearer comparisons across groups.
+
+In contrast, the version where faceting variables are displayed horizontally by column can be misleading. It gives the impression that individuals with only a high school diploma or some college experience are more likely to own homes at a younger age, which is not necessarily supported by the data. This highlights the importance of intentional facet layout. Row based faceting displays better comparisons when there are multiple categorical groupings.
+
+# 3c
+```{r (3c)}
+# Plot A
+ggplot(county %>% filter(!is.na(median_edu))) + 
+  geom_point(aes(x = homeownership, y = poverty)) +
+  labs (
+    title = "Plot A",
+  ) +
+  theme_gray(base_size = 11)
+  theme_minimal(base_size = 11)
+
+# Plot B 
+ggplot(county %>% filter(!is.na(median_edu))) + 
+  geom_point(aes(x = homeownership, y = poverty)) +
+  geom_smooth(aes(x = homeownership, y = poverty), color = "blue", se = FALSE) +
+  labs (
+    title = "Plot B",
+  ) +
+  theme_gray(base_size = 11)
+  theme_minimal(base_size = 11) 
+
+# Plot C 
+ggplot(county %>% filter(!is.na(median_edu))) + 
+  geom_point(aes(x = homeownership, y = poverty)) +
+  geom_smooth(aes(x = homeownership, y = poverty, group = metro), color = "limegreen", se = FALSE, show.legend = FALSE) +
+  labs (
+    title = "Plot C",
+  ) +
+  theme_gray(base_size = 11)
+  theme_minimal(base_size = 11) 
+
+# Plot D
+ggplot(county %>% filter(!is.na(median_edu))) + 
+  geom_smooth(aes(x = homeownership, y = poverty, group = metro), color = "blue", se = FALSE, show.legend = FALSE) +
+  geom_point(aes(x = homeownership, y = poverty)) +
+  labs (
+    title = "Plot D",
+  ) +
+  theme_gray(base_size = 11)
+  theme_minimal(base_size = 11)
+
+# Plot E
+ggplot(county %>% filter(!is.na(median_edu))) + 
+  geom_point(aes(x = homeownership, y = poverty, color = metro)) +
+  geom_smooth(aes(x = homeownership, y = poverty, linetype = metro), color = "blue", se = FALSE)
+  labs (
+    title = "Plot E",
+  ) +
+  theme_gray(base_size = 11)
+  theme_minimal(base_size = 11) 
+
+# Plot F
+ggplot(county %>% filter(!is.na(median_edu))) + 
+  geom_point(aes(x = homeownership, y = poverty, color = metro)) +
+  geom_smooth(aes(x = homeownership, y = poverty, color = metro), se = FALSE)
+  labs (
+    title = "Plot F",
+  ) +
+  theme_gray(base_size = 11)
+  theme_minimal(base_size = 11) 
+  
+# Plot G
+ggplot(county %>% filter(!is.na(median_edu))) + 
+  geom_point(aes(x = homeownership, y = poverty, color = metro)) +
+  geom_smooth(aes(x = homeownership, y = poverty), color = "blue", se = FALSE) +
+  labs (
+    title = "Plot G",
+  ) +
+  theme_gray(base_size = 11)
+  theme_minimal(base_size = 11) 
+  
+# Plot H
+ggplot(county %>% filter(!is.na(median_edu))) + 
+  geom_point(aes(x = homeownership, y = poverty, color = metro)) +
+  labs (
+    title = "Plot H",
+  ) +
+  theme_gray(base_size = 11)
+  theme_minimal(base_size = 11) 
+```
+
 
 ## 4 - Rental apartments in SF
 
