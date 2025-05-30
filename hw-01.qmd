@@ -371,7 +371,7 @@ Unmarried students have the highest credit card utilization relative to their in
 In contrast, while married non-students often carry higher credit card balances, their utilization rates remain relatively low, typically below 20% of their credit limit. This suggests that higher income earners tend to have greater available credit and are less reliant on it, while lower income individuals may have limited credit access and use a higher percentage of what is available to them.
 
 ### Sources
-Grid design in question 4 inspired by:
+Grid design in question 4 directly borrowed from:
 https://stackoverflow.com/questions/26191833/add-panel-border-to-ggplot2
 
 ## 5 - Napoleon’s march.
@@ -417,8 +417,7 @@ ggplot(napoleon$troops, aes(x = long, y = lat, group = group, color = direction,
 Directly borrowed code snippet from:
 https://www.andrewheiss.com/blog/2017/08/10/exploring-minards-1812-plot-with-ggplot2/
 
-To stretch x axis in question 5, code was inspired by:
-https://ggplot2.tidyverse.org/reference/coord_fixed.html
+To stretch x axis in question 5, code was inspired by: https://ggplot2.tidyverse.org/reference/coord_fixed.html
 
 Used this to solve bug in question 5 - geom_point and geom_text inherited the parents group setting. Code inspired by: 
 https://stackoverflow.com/questions/69817450/r-ggplot2-understanding-the-parameters-of-the-aes-function
