@@ -15,12 +15,10 @@ toc: true
 # load packages
 library(tidyverse)
 library(glue)
-library(scales)
 library(here)
 library(countdown)
 library(ggthemes)
 library(gt)
-library(palmerpenguins)
 library(openintro)
 library(ggrepel)
 library(patchwork)
@@ -40,9 +38,6 @@ knitr::opts_chunk$set(
   dpi = 300             # higher dpi, sharper image
 )
 
-message("Find Rtools? ", pkgbuild::find_rtools())
-
-
 if (!require("pacman")) 
   install.packages("pacman")
 
@@ -61,7 +56,7 @@ devtools::install_github("tidyverse/dsbox")
 ```{r Road traffic accidents in Edinburgh}
 # Read in data from accidents file
 accidents <- read_csv(here(
-  "data" ,"accidents.csv"))
+  "data" ,"accidents.csv"), show_col_types = FALSE)
 
 # Create a new column - wrangle the data
 accidents_wrangle <- accidents |>
@@ -70,7 +65,7 @@ accidents_wrangle <- accidents |>
       day_of_week %in% c("Saturday", "Sunday") ~ "Weekend",
       TRUE ~ "Weekday"
     ),
-    week = fct_relevel(week, "weekend", "weekday")
+    week = fct_relevel(week, "Weekday", "Weekend")
   ) 
 
 # Create the plot
@@ -93,11 +88,14 @@ Description TODO\n
 
 
 ## 2 - NYC marathon winners
-# 2a
+### 2a
 ```{r (2a)}
 # Read in data from nyc marathon file
 marathon <- read_csv(here(
-  "data" ,"nyc_marathon.csv"))
+  "data" ,"nyc_marathon.csv"), show_col_types = FALSE)
+
+# Remove NA in time hrs columns
+marathon <- marathon %>% filter(!is.na(time_hrs))
 
 # Create the histogram plot
 ggplot(marathon, aes(x = time_hrs)) +
@@ -114,14 +112,13 @@ ggplot(marathon, aes(x = time_hrs)) +
   geom_boxplot(outlier.size = 2) +
   labs (
     title = "Box plot of all runners in data set",
-    x = "Division",
-    y = "Time in hours"
+    x = "Time in hours",
   ) +
   theme_minimal(base_size = 11)
 ```
 The histogram makes it easier to gauge the total number of runners and to understand how many runners finished within each time range. It provides a clear visual representation of the distribution of finish times across the dataset. In contrast, the boxplot does not clearly show the quantity of runners, but it is effective for identifying trends such as the median finish time and any outliers.
 
-# 2b
+### 2b
 ```{r (2b)}
 # Create the histogram plot
 ggplot(marathon, aes(x = time_hrs, fill = division)) +
@@ -154,14 +151,14 @@ ggplot(marathon, aes(x = division, y = time_hrs, fill = division)) +
 Although not required, I recreated the same plot updates for the histogram as a practice exercise.
 The boxplot, with the fill parameter set to division (men or women), provides a clear visual comparison of performance based on gender. It shows that, in general, men tend to finish before the 2.25-hour mark, while women typically finish closer to or just after the 2.5-hour mark. The outliers for the men's division extend slightly beyond 2.5 hours, whereas the women's outliers appear after the 3-hour mark.
 
-# 2c
+### 2c
 TODO
 
-# 2d
+### 2d
 ```{r (2d)}
 # Read in data from nyc marathon file
 marathon <- read_csv(here(
-  "data" ,"nyc_marathon.csv")) |>
+  "data" ,"nyc_marathon.csv"), show_col_types = FALSE) |>
   mutate(
     decade_raced = (year %/% 10) * 10,
     decade_raced_cat = case_when(
@@ -171,10 +168,12 @@ marathon <- read_csv(here(
     )
   )
 
+# Remove NA in time hrs columns
+marathon <- marathon %>% filter(!is.na(time_hrs))
+
 # Add new variable
 marathon |>
-  count(decade_raced) |>
-  glimpse()
+  count(decade_raced) 
 
 # Create the box plot
 ggplot(marathon, aes(x = decade_raced_cat, y = time_hrs, fill = division)) +
@@ -195,23 +194,17 @@ years (or decades).TODO
 
 ## 3 - US counties
 
-# 3a
-```{r (3a)}
-ggplot(county) +
-  geom_point(aes(x = median_edu, y = median_hh_income)) +
-  geom_boxplot(aes(x = smoking_ban, y = pop2017))
-
-```
+### 3a
 The code displays a scatter plot of median education versus median household income. It also overlays a box plot of population in 2017 by smoking ban status on the same graph. Although the code runs without errors, it combines two unrelated visualizations on a single plot, which makes the results confusing and difficult to interpret.
 
 In addition, both layers use the same color scheme, making it hard to distinguish between the two plot types. Next, the y-axis must represent either income or population, but not both. The visual is misleading. Lastly, there is a category labeled 'NA' on the x-axis, from smoking_ban, that doesn't represent valid data and should be removed or handled.
 
-# 3b
+### 3b
 It is easier to compare poverty levels in the first plot, where the faceting variables are displayed vertically or in rows. From this plot, we observe that individuals who are older, more educated, and have lower poverty levels are more likely to be homeowners. This layout makes patterns easier to identify and shows clearer comparisons across groups.
 
 In contrast, the version where faceting variables are displayed horizontally by column can be misleading. It gives the impression that individuals with only a high school diploma or some college experience are more likely to own homes at a younger age, which is not necessarily supported by the data. This highlights the importance of intentional facet layout. Row based faceting displays better comparisons when there are multiple categorical groupings.
 
-# 3c
+### 3c
 ```{r (3c)}
 # Plot A
 ggplot(county %>% filter(!is.na(median_edu))) + 
@@ -220,7 +213,6 @@ ggplot(county %>% filter(!is.na(median_edu))) +
     title = "Plot A",
   ) +
   theme_gray(base_size = 11)
-  theme_minimal(base_size = 11)
 
 # Plot B 
 ggplot(county %>% filter(!is.na(median_edu))) + 
@@ -229,8 +221,7 @@ ggplot(county %>% filter(!is.na(median_edu))) +
   labs (
     title = "Plot B",
   ) +
-  theme_gray(base_size = 11)
-  theme_minimal(base_size = 11) 
+  theme_gray(base_size = 11)  
 
 # Plot C 
 ggplot(county %>% filter(!is.na(median_edu))) + 
@@ -239,8 +230,7 @@ ggplot(county %>% filter(!is.na(median_edu))) +
   labs (
     title = "Plot C",
   ) +
-  theme_gray(base_size = 11)
-  theme_minimal(base_size = 11) 
+  theme_gray(base_size = 11) 
 
 # Plot D
 ggplot(county %>% filter(!is.na(median_edu))) + 
@@ -250,27 +240,24 @@ ggplot(county %>% filter(!is.na(median_edu))) +
     title = "Plot D",
   ) +
   theme_gray(base_size = 11)
-  theme_minimal(base_size = 11)
 
 # Plot E
 ggplot(county %>% filter(!is.na(median_edu))) + 
   geom_point(aes(x = homeownership, y = poverty, color = metro)) +
-  geom_smooth(aes(x = homeownership, y = poverty, linetype = metro), color = "blue", se = FALSE)
+  geom_smooth(aes(x = homeownership, y = poverty, linetype = metro), color = "blue", se = FALSE) +
   labs (
     title = "Plot E",
   ) +
   theme_gray(base_size = 11)
-  theme_minimal(base_size = 11) 
 
 # Plot F
 ggplot(county %>% filter(!is.na(median_edu))) + 
   geom_point(aes(x = homeownership, y = poverty, color = metro)) +
-  geom_smooth(aes(x = homeownership, y = poverty, color = metro), se = FALSE)
+  geom_smooth(aes(x = homeownership, y = poverty, color = metro), se = FALSE) +
   labs (
     title = "Plot F",
   ) +
-  theme_gray(base_size = 11)
-  theme_minimal(base_size = 11) 
+  theme_gray(base_size = 11) 
   
 # Plot G
 ggplot(county %>% filter(!is.na(median_edu))) + 
@@ -279,8 +266,7 @@ ggplot(county %>% filter(!is.na(median_edu))) +
   labs (
     title = "Plot G",
   ) +
-  theme_gray(base_size = 11)
-  theme_minimal(base_size = 11) 
+  theme_gray(base_size = 11) 
   
 # Plot H
 ggplot(county %>% filter(!is.na(median_edu))) + 
@@ -289,16 +275,15 @@ ggplot(county %>% filter(!is.na(median_edu))) +
     title = "Plot H",
   ) +
   theme_gray(base_size = 11)
-  theme_minimal(base_size = 11) 
 ```
 
-## 4 - Rental apartments in SF
+## 4 - Credit Card Balances
 
-# 4a
+### 4a
 ```{r (4a)}
 # Read in data from credit file
 credit <- read_csv(here(
-  "data" ,"credit.csv"))
+  "data" ,"credit.csv"), show_col_types = FALSE)
 
 # Create the plot
 ggplot(credit) + 
@@ -337,17 +322,16 @@ Students who are not married typically have the lowest incomes, but still carry 
 
 Married individuals who are not students appear to include the highest income earners. Some of them also hold the largest credit card balances and these are the most extreme outliers in the dataset. Meanwhile, unmarried non-students show a more even distribution in both income and credit card balance.
 
-# 4b
+### 4b
 The combination of marital and student status, along with income, provides insight into credit card balance trends. Married individuals who are not students generally have the highest incomes and include outliers with the largest credit card balances. In contrast, unmarried students tend to have the lowest incomes and display a wide range of credit card debt levels.
 
-# 4c
+### 4c
 ```{r (4c)}
 # Wrangle data - credit card utilization
 credit <- credit |>
   mutate(
     utilization = (balance / limit)
-  ) |>
-  glimpse()
+  )
 
 # Create the plot
 ggplot(credit) + 
@@ -381,7 +365,7 @@ ggplot(credit) +
 
 ```
 
-# 4d
+### 4d
 Unmarried students have the highest credit card utilization relative to their income. Similarly, married students with lower incomes also show high utilization rates. Overall, there is a trend where lower income individuals tend to use a larger portion of their available credit.
 
 In contrast, while married non-students often carry higher credit card balances, their utilization rates remain relatively low, typically below 20% of their credit limit. This suggests that higher income earners tend to have greater available credit and are less reliant on it, while lower income individuals may have limited credit access and use a higher percentage of what is available to them.
