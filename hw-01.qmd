@@ -84,8 +84,7 @@ ggplot(accidents_wrangle, aes(x = time, fill = severity, group = severity)) +
 
 
 ```
-Description TODO\n
-
+This plot shows the number of accidents throughout the day, categorized by severity: fatal, serious, and slight. It appears that on weekdays, there are more fatal accidents and a higher overall number of accidents, especially in the afternoon and evening. On weekends, there tend to be more slight and serious accidents during the day, with a noticeable increase in the afternoon and evening hours.
 
 ## 2 - NYC marathon winners
 ### 2a
@@ -120,11 +119,29 @@ The histogram makes it easier to gauge the total number of runners and to unders
 
 ### 2b
 ```{r (2b)}
+# Create the box plot
+ggplot(marathon, aes(x = division, y = time_hrs, fill = division)) +
+  geom_boxplot(outlier.size = 2) +
+  scale_fill_manual(
+    values = c("Men" = "pink", "Women" = "deepskyblue3")
+  ) +
+  labs (
+    title = "Box plot of all runners in data set",
+    x = "Division",
+    y = "Time in hours",
+    fill = "Division"
+  ) +
+  theme_minimal(base_size = 11)
+```
+The boxplot, with the fill parameter set to division (men or women), provides a better visual comparison of performance based on gender. It shows that, in general, men tend to finish before the 2.25-hour mark, while women typically finish closer to or just after the 2.5-hour mark. The outliers for the men's division extend slightly beyond 2.5 hours, whereas the women's outliers appear after the 3-hour mark.
+
+### 2c
+```{r (2c)}
 # Create the histogram plot
 ggplot(marathon, aes(x = time_hrs, fill = division)) +
   geom_histogram(binwidth = 0.1) +
   scale_fill_manual(
-    values = c("Men" = "cornsilk4", "Women" = "deepskyblue3")
+    values = c("Men" = "pink", "Women" = "deepskyblue3")
   ) +
   labs (
     title = "Histogram of all runners in data set",
@@ -134,79 +151,43 @@ ggplot(marathon, aes(x = time_hrs, fill = division)) +
   ) +
   theme_minimal(base_size = 11)
 
-# Create the box plot
-ggplot(marathon, aes(x = division, y = time_hrs, fill = division)) +
-  geom_boxplot(outlier.size = 2) +
-  scale_fill_manual(
-    values = c("Men" = "cornsilk4", "Women" = "deepskyblue3")
-  ) +
-  labs (
-    title = "Box plot of all runners in data set",
-    x = "Division",
-    y = "Time in hours",
-    fill = "Division"
-  ) +
-  theme_minimal(base_size = 11)
-```
-Although not required, I recreated the same plot updates for the histogram as a practice exercise.
-The boxplot, with the fill parameter set to division (men or women), provides a clear visual comparison of performance based on gender. It shows that, in general, men tend to finish before the 2.25-hour mark, while women typically finish closer to or just after the 2.5-hour mark. The outliers for the men's division extend slightly beyond 2.5 hours, whereas the women's outliers appear after the 3-hour mark.
 
-### 2c
-```{r (2c)}
-# Create the box plot
-ggplot(marathon, aes(x = "", y = time_hrs), color = division) +
-  geom_boxplot(outlier.size = 2) +
-  scale_color_manual(values = c("Men" = "cornsilk4", "Women" = "deepskyblue3")) +
-  scale_fill_manual(
-    values = c("Men" = "cornsilk4", "Women" = "deepskyblue3")
-  ) +
-  labs (
-    title = "Box plot of all runners in data set",
-    x = "Division",
-    y = "Time in hours",
-    fill = "Division"
-  ) +
-  theme_minimal(base_size = 11)
+# # Create the box plot
+# ggplot(marathon, aes(x = "", y = time_hrs), color = division) +
+#   geom_boxplot(outlier.size = 2) +
+#   scale_color_manual(values = c("Men" = "pink", "Women" = "deepskyblue3")) +
+#   scale_fill_manual(
+#     values = c("Men" = "pink", "Women" = "deepskyblue3")
+#   ) +
+#   labs (
+#     title = "Box plot of all runners in data set",
+#     x = "Division",
+#     y = "Time in hours",
+#     fill = "Division"
+#   ) +
+#   theme_minimal(base_size = 11)
 ```
-The two separate displays for men and women category is redundant 
+The separate displays for the men's and women's categories are redundant. The histogram effectively captures both men's and women's race times in a single view and makes comparing easier. This approach also improves the data-to-ink ratio by reducing unnecessary visual elements.
 
 ### 2d
 ```{r (2d)}
-# Read in data from nyc marathon file
-marathon <- read_csv(here(
-  "data" ,"nyc_marathon.csv"), show_col_types = FALSE) |>
-  mutate(
-    decade_raced = (year %/% 10) * 10,
-    decade_raced_cat = case_when(
-      decade_raced <= 1970 ~ "1970 or before",
-      decade_raced >= 2020 ~ "2020 or after",
-      TRUE ~ as.character(decade_raced)
-    )
-  )
-
-# Remove NA in time hrs columns
-marathon <- marathon %>% filter(!is.na(time_hrs))
-
-# Add new variable
-marathon |>
-  count(decade_raced) 
-
-# Create the box plot
-ggplot(marathon, aes(x = decade_raced_cat, y = time_hrs, fill = division)) +
-  geom_boxplot(outlier.size = 2) +
+# Create a new plot
+ggplot(marathon, aes(x = year, y = time_hrs, line = division), color = division) +
+  geom_line(linewidth = 0.8, color = "cornsilk4") +
+  geom_point(aes(shape = division, color = division), size = 4, show.legend = FALSE) +
+  scale_color_manual(values = c("Men" = "pink", "Women" = "deepskyblue3")) +
   scale_fill_manual(
     values = c("Men" = "cornsilk4", "Women" = "deepskyblue3")
   ) +
   labs (
-    title = "Marathon Finish Times by Decade and Division",
+    title = "Time series plot of all runners in data set",
     x = "Year",
-    y = "Time in Hours",
+    y = "Time in hours",
     fill = "Division"
   ) +
   theme_minimal(base_size = 11)
 ```
-This plot gives us a better idea of performance for men and womens race times based on 
-years (or decades).TODO
+This plot provides a clearer understanding of the performance trends in men's and women's race times over the years. The different shapes and colors in the scatter plot offer additional details into the race times.
 
 ## 3 - US counties
 
